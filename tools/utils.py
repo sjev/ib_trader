@@ -11,11 +11,13 @@ import logging
 def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO):
     """ configure logging to console and file """
     
+    fmt = "%(asctime)s  %(levelname)s [%(name)s-%(funcName)s] - %(message)s"
+    
     # file logging
     logging.basicConfig(level=fileLevel,
                     filename = logFile,
                     filemode = 'w',
-                    format="%(asctime)s [%(name)s-%(funcName)s] - %(levelname)s - %(message)s",
+                    format=fmt,
                     datefmt="%H:%M:%S")
                    
      
@@ -25,13 +27,14 @@ def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO
     
     
     # add filter for ibapi, cluttering root logger
-    f  = RootLogFilter(logging.ERROR)
+    # not needed with a forked version of ibapi
+    #f  = RootLogFilter(logging.ERROR)
     #log.addFilter(f)
     
     
     console = logging.StreamHandler()
     console.setLevel(consoleLevel)
-    formatter = logging.Formatter('%(asctime)-5s %(levelname)-5s %(message)s',datefmt="%H:%M:%S")
+    formatter = logging.Formatter(fmt,datefmt="%H:%M:%S")
     console.setFormatter(formatter)
     log.addHandler(console)
   
