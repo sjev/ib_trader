@@ -6,6 +6,9 @@ utilities for tick logger
 """
 
 import logging
+import os
+import time
+import datetime as dt
 
 
 def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO):
@@ -20,8 +23,6 @@ def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO
                     format=fmt,
                     datefmt="%H:%M:%S")
                    
-     
-                  
                        
     log = logging.getLogger()
     
@@ -31,23 +32,70 @@ def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO
     #f  = RootLogFilter(logging.ERROR)
     #log.addFilter(f)
     
-    
+   
     console = logging.StreamHandler()
     console.setLevel(consoleLevel)
     formatter = logging.Formatter(fmt,datefmt="%H:%M:%S")
     console.setFormatter(formatter)
     log.addHandler(console)
   
+    # configure other modules
+    logger = logging.getLogger('ib_insync')
+    logger.setLevel(logging.ERROR)
     
+    #logging.getLogger('ibapi').setLevel(logging.ERROR)
+    os.environ['IBAPI_LOGLEVEL'] = str(logging.INFO)
 
-class RootLogFilter:
 
-    def __init__(self, ibapiLevel=logging.ERROR):
-        self.ibapiLevel = ibapiLevel
 
-    def filter(self, record):
-        # if it's logged on the root logger assume it's from ibapi
-        if record.name == 'root' and record.levelno < self.ibapiLevel:
-            return False
-        else:
-            return True
+#class RootLogFilter:
+#
+#    def __init__(self, ibapiLevel=logging.ERROR):
+#        self.ibapiLevel = ibapiLevel
+#
+#    def filter(self, record):
+#        # if it's logged on the root logger assume it's from ibapi
+#        if record.name == 'root' and record.levelno < self.ibapiLevel:
+#            return False
+#        else:
+#            return True
+        
+class RotatingFile():
+    """ data file rotated each day """
+    
+    def __init__(self,path):
+        
+        self._path = path
+        
+        
+        # open file
+        self._newFile()
+        
+    def _day_changed(self):
+        return self._day != time.localtime().tm_mday 
+
+    def _newFile(self):
+        """ create filename """
+        fileName = 'tickLog_%s.csv' % dt.datetime.now().strftime('%Y%m%d_%H%M%S')
+        fileName = os.path.join(self._path, fileName)
+        print('Logging ticks to ' , fileName)
+        self._file = open(fileName,'w')       
+        
+        self._day = time.localtime().tm_mday
+        
+    def write(self, *args):
+        
+        if self._day_changed():
+            self._file.close()
+            self._newFile()
+        
+        return getattr(self._file,'write')(*args)
+    
+    def close(self):
+        self._file.close()
+        
+    def flush(self):
+        self._file.flush()
+        
+    def __del__(self):
+        self._file.close()

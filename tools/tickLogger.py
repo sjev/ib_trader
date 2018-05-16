@@ -7,24 +7,37 @@ Tick logger with ib_insync
 
 import logging
 import utils
-from pprint import pprint
-
 utils.configLogging('tickLogger.log')
+
+logFields = ['bidSize','bid','ask','askSize','high','low','close']
+import traceback, sys, pdb
+ 
+def tick2str(tick, fields= logFields, sep =','):
+    """ convert ibinsync tick to a (loggable) string """
+    symbol = str(tick.contract.symbol)
+    f = [symbol]+[ str(getattr(tick,field)) for field in fields]
+    s = sep.join(f)
+    return s
+
+
 #%%
 
 def onPendingTickers(tickers):
-    for t in tickers:
-        print(t.contract.symbol,t.bidSize, t.bid, t.ask, t.askSize, t.high, t.low, t.close)
+    
+    try:
+        for t in tickers:
+            log.debug(str(t))
+    except:
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        pdb.post_mortem(tb)
+
 
 #%%
-import os
-os.environ['IBAPI_LOGLEVEL'] = str(logging.INFO)
+
 
 import ib_insync as ibis
 
-
-#for handler in logger.handlers:
-#    handler.setLevel(level)
 
 log = logging.getLogger('main')
 ib = ibis.IB()
