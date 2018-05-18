@@ -43,8 +43,7 @@ def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO
     logger = logging.getLogger('ib_insync')
     logger.setLevel(logging.ERROR)
     
-    #logging.getLogger('ibapi').setLevel(logging.ERROR)
-    os.environ['IBAPI_LOGLEVEL'] = str(logging.INFO)
+    logging.getLogger('ibapi').setLevel(logging.DEBUG)
 
 
 
