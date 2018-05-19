@@ -14,13 +14,20 @@ import datetime as dt
 def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO):
     """ configure logging to console and file """
     
-    fmt = "%(asctime)s  %(levelname)s [%(name)s-%(funcName)s] - %(message)s"
+    fmt_file = "%(asctime)s  %(levelname)s [%(name)s-%(funcName)s] - %(message)s"
+    fmt_console ="%(asctime)s  %(levelname)s [%(name)s] - %(message)s"
+    
+    
+    # configure other modules
+    logging.getLogger('ib_insync').setLevel(logging.ERROR)
+    logging.getLogger('ibapi').setLevel(logging.ERROR)
+    
     
     # file logging
     logging.basicConfig(level=fileLevel,
                     filename = logFile,
                     filemode = 'w',
-                    format=fmt,
+                    format=fmt_file,
                     datefmt="%H:%M:%S")
                    
                        
@@ -35,15 +42,11 @@ def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO
    
     console = logging.StreamHandler()
     console.setLevel(consoleLevel)
-    formatter = logging.Formatter(fmt,datefmt="%H:%M:%S")
+    formatter = logging.Formatter(fmt_console,datefmt="%H:%M:%S")
     console.setFormatter(formatter)
     log.addHandler(console)
   
-    # configure other modules
-    logger = logging.getLogger('ib_insync')
-    logger.setLevel(logging.ERROR)
     
-    logging.getLogger('ibapi').setLevel(logging.DEBUG)
 
 
 
