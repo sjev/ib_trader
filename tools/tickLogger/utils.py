@@ -11,9 +11,9 @@ import time
 import datetime as dt
 
 
-def configLogging(logFile, fileLevel= logging.DEBUG, consoleLevel = logging.INFO):
+def configLogging(logFile, fileLevel= logging.INFO, consoleLevel = logging.INFO):
     """ configure logging to console and file """
-    
+
     fmt_file = "%(asctime)s  %(levelname)s [%(name)s-%(funcName)s] - %(message)s"
     fmt_console ="%(asctime)s  %(levelname)s [%(name)s] - %(message)s"
     

@@ -45,7 +45,7 @@ def getParser():
     import argparse
     parser = argparse.ArgumentParser(description='Log ticks for a set of stocks')
     parser.add_argument("--settings",help = 'ini file containing settings', default='settings.yml')
-    
+    parser.add_argument("--debug",help = 'log debug level info', action='store_true')
     return parser
 
 
@@ -59,8 +59,6 @@ class TickLogger(object):
     '''
     def __init__(self,dataDir ):
         ''' init class '''
- 
- 
         # save starting time of logging. All times will be in seconds relative
         # to this moment
         self._startTime = time.time() 
@@ -87,11 +85,13 @@ class TickLogger(object):
  
     def flush(self):
         ''' commits data to file'''
+        log.info('committing to file')
         self.dataFile.flush()
+        
  
     def close(self):
         '''close file in a neat manner '''
-        print('Closing data file')
+        log.info('Closing data file')
         self.dataFile.close()
 
 
@@ -100,12 +100,12 @@ class TickLogger(object):
 #%% main script
 
 if __name__=="__main__":
-    log = logging.getLogger('main')
-    
+    log = logging.getLogger('main')    
     parser = getParser()
     args = parser.parse_args()
     log.debug(args)
-    
+    if args.debug:
+       log.setLevel(logging.DEBUG)
     settings = yaml.load(open(args.settings,'r'))
     
     tickLogger = TickLogger(settings['dataRoot'])
@@ -128,7 +128,7 @@ if __name__=="__main__":
     
     try:
         while True:    
-            ib.sleep(2)
+            ib.sleep(10)
             tickLogger.flush()
     except KeyboardInterrupt:
         log.info('Exiting')
