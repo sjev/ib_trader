@@ -71,12 +71,14 @@ class TickLogger(object):
  
     
     def tickHandler(self, tickers):
-        
+	
+        print('.',end='')        
         for tick in tickers:
             log.debug(str(tick))
             self._writeData(tick2str(tick))
     
     
+
     def _writeData(self,s):
         ''' write data to log file while adding a timestamp '''
         timestamp = '%.3f' % (time.time()-self._startTime) # 1 ms resolution
@@ -128,7 +130,7 @@ if __name__=="__main__":
     
     try:
         while True:    
-            ib.sleep(10)
+            ib.sleep(60)
             tickLogger.flush()
     except KeyboardInterrupt:
         log.info('Exiting')

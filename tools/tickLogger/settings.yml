@@ -1,4 +1,4 @@
-dataRoot: tickLogs
+dataRoot: /home/jev/tickLogs
 subscriptions:
     - {symbol: VXX, currency: USD, exchange: SMART, secType: STK}
     - {symbol: SPY, currency: USD, exchange: SMART, secType: STK}
