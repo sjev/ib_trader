@@ -99,4 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+
+# ignore folders
+scratch
 tickLogs
