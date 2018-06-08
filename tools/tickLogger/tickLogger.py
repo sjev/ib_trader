@@ -72,7 +72,6 @@ class TickLogger(object):
     
     def tickHandler(self, tickers):
 	
-        print('.',end='')        
         for tick in tickers:
             log.debug(str(tick))
             self._writeData(tick2str(tick))
